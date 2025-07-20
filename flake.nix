@@ -7,13 +7,28 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
   let
+    system = "x86_64-linux";
     commonSystem = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+      inherit system;
       specialArgs = { };
-      modules = [
-        ./configuration.nix
-        { time.timeZone = "Asia/Singapore"; }
-      ];
+      modules = [ {
+          imports = [ ./hardware-configuration.nix ];
+
+          boot.loader.systemd-boot.enable = true;
+          boot.loader.efi.canTouchEfiVariables = true;
+          networking.defaultGateway = "192.168.10.1";
+          networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+          services.openssh.enable = true;
+	  time.timeZone = "Asia/Singapore";
+          security.sudo.wheelNeedsPassword = false;
+          users.users.samuel = {
+            isNormalUser = true;
+            extraGroups = [ "wheel" ];
+          };
+          environment.systemPackages = with nixpkgs.legacyPackages.${system}; [ vim ];
+          nix.settings.experimental-features = [ "nix-command" "flakes" ];
+          system.stateVersion = "25.05";
+      } ];
     };
   in {
     nixosConfigurations = {
