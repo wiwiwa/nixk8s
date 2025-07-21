@@ -8,16 +8,22 @@
   outputs = { self, nixpkgs, ... }@inputs:
   let
     system = "x86_64-linux";
+    defaultGateway = "192.168.10.1";
     commonSystem = nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { };
       modules = [ {
-          imports = [ ./hardware-configuration.nix ];
+          imports = [ /etc/nixos/hardware-configuration.nix ];
 
           boot.loader.systemd-boot.enable = true;
           boot.loader.efi.canTouchEfiVariables = true;
-          networking.defaultGateway = "192.168.10.1";
           networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+          networking.defaultGateway = defaultGateway;
+	  networking.interfaces.eno1.ipv4.addresses = [ {
+	    address = "192.168.100.7";
+	    prefixLength = 23;
+	  } ];
+
           services.openssh.enable = true;
 	  time.timeZone = "Asia/Singapore";
           security.sudo.wheelNeedsPassword = false;
@@ -32,8 +38,7 @@
     };
   in {
     nixosConfigurations = {
-      server7 = commonSystem;
-      server8 = commonSystem;
+      server-7 = commonSystem;
     };
   };
 }
