@@ -15,10 +15,19 @@
           bond0 = { interfaces = ["eno1" "eno2" "eno3" "eno4" ]; };
           bond1 = { interfaces = ["ens1f0" "ens1f1" ]; };
         };
+	k8s_master=true;
       };
       "brvx-dc-8" = { };
       "brvx-dc-9" = { };
     };
+
+    masterList = nixpkgs.lib.attrNames (nixpkgs.lib.filterAttrs (n: v: v.k8s_master or false) serverConfig);
+    masterName = if nixpkgs.lib.length masterList != 1
+                 then throw "There must be exactly one k8s master defined in serverConfig"
+                 else nixpkgs.lib.head masterList;
+    masterNum = nixpkgs.lib.last (nixpkgs.lib.splitString "-" masterName);
+    masterIp = "192.168.100.${masterNum}";
+
     users = {
       users.samuel = {
         isNormalUser = true;
@@ -60,8 +69,16 @@
         networking.hostName = serverName;
 
         services.openssh.enable = true;
+        services.kubernetes.roles =
+          if (serverConfig.${serverName}.k8s_master or false)
+          then [ "master" "node" ]
+          else [ "node" ];
+        services.kubernetes.masterAddress = masterIp;
+
         time.timeZone = "Asia/Singapore";
-        environment.systemPackages = with nixpkgs.legacyPackages.${system}; [ vim ];
+        environment.systemPackages = with nixpkgs.legacyPackages.${system}; [
+          vim kubernetes
+	];
         security.sudo.wheelNeedsPassword = false;
 
         nix.settings.experimental-features = [ "nix-command" "flakes" ];
