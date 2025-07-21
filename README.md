@@ -6,14 +6,10 @@ This repository contains a NixOS configuration managed with Flakes.
 
 To apply the configuration to a host, use the `nixos-rebuild` command with the appropriate flake output.
 
-This flake generates configurations for hosts named `brvx-dc-1` through `brvx-dc-254`.
-
 ### Example for a server
 
-Replace `<hostname>` with the actual hostname of the server you are provisioning (e.g., `brvx-dc-1`).
-
 ```sh
-sudo nixos-rebuild switch --flake --impure .#<hostname>
+sudo nixos-rebuild switch --impure --flake https://github.com/wiwiwa/nixos-config/archive/refs/heads/main.tar.gz#brvx-dc-7
 ```
 
 This will build the system configuration defined in `flake.nix` for the specified host and make it the current generation.
