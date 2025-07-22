@@ -26,7 +26,6 @@
                  then throw "There must be exactly one k8s master defined in serverConfig"
                  else nixpkgs.lib.head masterList;
     masterNum = nixpkgs.lib.last (nixpkgs.lib.splitString "-" masterName);
-    masterIp = "192.168.100.${masterNum}";
 
     users = {
       users.samuel = {
@@ -73,7 +72,7 @@
           if (serverConfig.${serverName}.k8s_master or false)
           then [ "master" "node" ]
           else [ "node" ];
-        services.kubernetes.masterAddress = masterIp;
+        services.kubernetes.masterAddress = "192.168.222.${masterNum}";
 
         time.timeZone = "Asia/Singapore";
         environment.systemPackages = with nixpkgs.legacyPackages.${system}; [
