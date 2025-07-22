@@ -66,6 +66,7 @@
         networking.nameservers = ["1.1.1.1" "8.8.8.8"];
         networking.defaultGateway = defaultGateway;
         networking.hostName = serverName;
+        networking.firewall.enable = false;
 
         services.openssh.enable = true;
         services.kubernetes.roles =
@@ -73,6 +74,7 @@
           then [ "master" "node" ]
           else [ "node" ];
         services.kubernetes.masterAddress = "192.168.222.${masterNum}";
+        services.kubernetes.flannel.enable = false;
 
         time.timeZone = "Asia/Singapore";
         environment.systemPackages = with nixpkgs.legacyPackages.${system}; [
