@@ -7,7 +7,6 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
   let
-    system = "x86_64-linux";
     defaultGateway = "192.168.100.1";
     serverConfig = {
       "brvx-dc-7" = {
@@ -15,10 +14,19 @@
           bond0 = { interfaces = ["eno1" "eno2" "eno3" "eno4" ]; };
           bond1 = { interfaces = ["ens1f0" "ens1f1" ]; };
         };
-	k8s_master=true;
+	      k8s_master=true;
       };
       "brvx-dc-8" = { };
       "brvx-dc-9" = { };
+      "qemu" = {
+        system="aarch64-linux";
+        nicBinding = {
+          bond0 = { interfaces = ["enp0s1"]; };
+          bond1 = { interfaces = ["enp0s2"]; };
+        };
+        networking.address = "10.0.2.15";
+        networking.defaultGateway = "10.0.2.2";
+      };
     };
 
     masterList = nixpkgs.lib.attrNames (nixpkgs.lib.filterAttrs (n: v: v.k8s_master or false) serverConfig);
@@ -40,8 +48,8 @@
       };
     };
 
-    makeSystem = serverName: serverNum: nixpkgs.lib.nixosSystem {
-      inherit system;
+    makeSystem = serverName: serverNum: nixpkgs.lib.nixosSystem rec{
+      system = serverConfig.${serverName}.system or "x86_64-linux";
       specialArgs = { };
       modules = [ {
         inherit users;
@@ -56,7 +64,7 @@
           bond1 = { interfaces = ["eno1" "eno2"]; };
         });
         networking.interfaces.bond0.ipv4.addresses = [ {
-          address = "192.168.100.${serverNum}";
+          address = serverConfig.${serverName}.networking.address or "192.168.100.${serverNum}";
           prefixLength = 24;
         } ];
         networking.interfaces.bond1.ipv4.addresses = [ {
@@ -64,7 +72,7 @@
           prefixLength = 24;
         } ];
         networking.nameservers = ["1.1.1.1" "8.8.8.8"];
-        networking.defaultGateway = defaultGateway;
+        networking.defaultGateway = serverConfig.${serverName}.networking.defaultGateway or defaultGateway;
         networking.hostName = serverName;
         networking.firewall.enable = false;
 
