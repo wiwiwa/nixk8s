@@ -9,6 +9,7 @@ in
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelParams = [ "console=ttyS0,115200n8" ];
 
   networking.useDHCP = false;
   networking.bonds = (serverConfig.${serverName}.nicBinding or {

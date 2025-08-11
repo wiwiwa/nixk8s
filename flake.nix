@@ -17,10 +17,9 @@
       "brvx-dc-8" = { };
       "brvx-dc-9" = { };
       "qemu-7" = { # to test in qemu
-        system="aarch64-linux";
         nicBinding = {
-          bond0 = { interfaces = ["enp0s1"]; };
-          bond1 = { interfaces = ["enp0s2"]; };
+          bond0 = { interfaces = ["ens3"]; };
+          bond1 = { interfaces = ["ens4"]; };
         };
         networking.address = "10.0.2.15";
         networking.defaultGateway = "10.0.2.2";
@@ -29,7 +28,7 @@
     };
 
     makeSystem = serverName: nixpkgs.lib.nixosSystem rec{
-      system = serverConfig.${serverName}.system or "x86_64-linux";
+      system = "x86_64-linux";
       specialArgs = { inherit serverConfig defaultGateway serverName; };
       modules = [
         ./nixos.nix
