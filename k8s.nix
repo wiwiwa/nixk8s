@@ -15,8 +15,8 @@ in
     services.kubernetes.masterAddress = "192.168.200.${masterNum}";
     services.kubernetes.flannel.enable = false;
     services.kubernetes.apiserver.allowPrivileged = true;
-    services.kubernetes.kubelet.cni.packages = [ pkgs.cni-plugins pkgs.cilium-cli ];
-    environment.systemPackages = [ pkgs.kubectl ];
+    services.kubernetes.kubelet.cni.packages = [ pkgs.cni-plugins ];
+    environment.systemPackages = [ pkgs.kubectl pkgs.cilium-cli ];
     fileSystems."/etc/cni/net.d" = {
       device = "/var/lib/kubelet";
       fsType = "none";

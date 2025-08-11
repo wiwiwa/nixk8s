@@ -5,7 +5,7 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
   let
-    defaultGateway = "192.168.100.1";
+    defaultGateway = "192.168.100.254";
     serverConfig = {
       "brvx-dc-7" = {
         nicBinding = {
