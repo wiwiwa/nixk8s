@@ -27,7 +27,7 @@
       };
     };
 
-    makeSystem = serverName: nixpkgs.lib.nixosSystem rec{
+    makeSystem = serverName: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit serverConfig defaultGateway serverName; };
       modules = [
