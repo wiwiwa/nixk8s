@@ -17,6 +17,7 @@ in {
     services.kubernetes.kubelet.cni.packages = [ pkgs.cni-plugins ];
     # restart daemonset cilium to write /opt/cni/bin/cilium-cni, as kubelet service clear /opt/cni/bin when starting
     systemd.services.kubelet.postStart = ''
+      mkdir -p /var/lib/kubelet/pods /var/lib/kubelet/plugins_registry
       id=$(${crictl} pods --label app.kubernetes.io/name=cilium-agent -q)
       ${crictl} stopp $id
       ${crictl} rmp $id
