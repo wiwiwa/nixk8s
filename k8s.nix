@@ -29,5 +29,10 @@ in {
       fsType = "none";
       options = [ "bind" ];
     };
+    fileSystems."/lib/modules" = {
+      device = "/run/booted-system/kernel-modules/lib/modules";
+      fsType = "none";
+      options = [ "bind" ];
+    };
   };
 }

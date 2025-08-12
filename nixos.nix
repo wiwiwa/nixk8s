@@ -28,6 +28,10 @@ in
   networking.defaultGateway = serverConfig.${serverName}.networking.defaultGateway or defaultGateway;
   networking.enableIPv6 = false;
   networking.hostName = serverName;
+  networking.hosts = lib.mapAttrs' (name: _: {
+    name = "192.168.200.${lib.last (lib.splitString "-" name)}";
+    value = [ name ];
+  }) serverConfig;
   networking.firewall.enable = false;
 
   services.openssh.enable = true;
