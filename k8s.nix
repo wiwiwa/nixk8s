@@ -18,11 +18,8 @@ in
     services.kubernetes.kubelet.cni.packages = [ pkgs.cni-plugins ];
     # restart daemonset cilium to write /opt/cni/bin/cilium-cni, as kubelet service clear /opt/cni/bin when starting
     systemd.services.kubelet.postStart = ''
-      export PATH=/nix/var/nix/profiles/system/sw/bin \
-        KUBECONFIG=/etc/kubernetes/cluster-admin.kubeconfig
-      kubectl -n kube-system get pod -o wide -l k8s-app=cilium | \
-        awk "\$7==\"$(hostname)\"{print \$1}" | \
-        xargs kubectl -n kube-system delete pod
+      PATH=/nix/var/nix/profiles/system/sw/bin
+      ps ho pid -C cilium-agent | xargs -r kill
     '';
     environment.systemPackages = [ pkgs.kubectl pkgs.cilium-cli ];
     # make /etc/cni/net.d writtable
