@@ -9,7 +9,7 @@ To apply the configuration to a host, use the `nixos-rebuild` command with the a
 ### Example for a server
 
 ```sh
-sudo nixos-rebuild switch --impure --flake https://github.com/wiwiwa/nixos-config/archive/refs/heads/main.tar.gz#brvx-dc-7
+sudo nixos-rebuild switch --impure --flake https://github.com/wiwiwa/nixk8s/archive/refs/heads/main.tar.gz#brvx-dc-7
 ```
 
 This will build the system configuration defined in `flake.nix` for the specified host
