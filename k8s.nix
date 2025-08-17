@@ -34,5 +34,6 @@ in {
       fsType = "none";
       options = [ "bind" ];
     };
+    services.certmgr.renewInterval = "24h";
   };
 }
