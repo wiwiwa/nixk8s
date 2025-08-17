@@ -1,3 +1,4 @@
+# FROM: https://github.com/rook/rook/blob/v1.17.7/deploy/examples/cluster.yaml
 #################################################################################################################
 # Define the settings for the rook-ceph cluster with common settings for a production cluster.
 # All nodes with available raw devices will be used for the Ceph cluster. At least three nodes are required
@@ -19,9 +20,9 @@ spec:
     # v18 is Reef, v19 is Squid
     # RECOMMENDATION: In production, use a specific version tag instead of the general v19 flag, which pulls the latest release and could result in different
     # versions running within the cluster. See tags available at https://hub.docker.com/r/ceph/ceph/tags/.
-    # If you want to be more precise, you can always use a timestamp tag such as quay.io/ceph/ceph:v19.2.2-20250409
+    # If you want to be more precise, you can always use a timestamp tag such as quay.io/ceph/ceph:v19.2.3-20250717
     # This tag might not contain a new Ceph version, just security fixes from the underlying operating system, which will reduce vulnerabilities
-    image: quay.io/ceph/ceph:v19.2.2
+    image: quay.io/ceph/ceph:v19.2.3
     # Whether to allow unsupported versions of Ceph. Currently Reef and Squid are supported.
     # Future versions such as Tentacle (v20) would require this to be set to `true`.
     # Do not set to true in production.
@@ -163,6 +164,7 @@ spec:
       method: quick
       # dataSource indicate where to get random bytes from to write on the disk
       # possible choices are 'zero' (default) or 'random'
+      # the 'random' source only works with the 'complete' method, the 'quick' method will use the 'zero' source
       # using random sources will consume entropy from the system and will take much more time then the zero source
       dataSource: zero
       # iteration overwrite N times instead of the default (1)
@@ -263,14 +265,14 @@ spec:
   storage: # cluster level storage configuration and selection
     useAllNodes: true
     useAllDevices: true
-    deviceFilter: "^bcache.*"
+    #deviceFilter:
     config:
-    # crushRoot: "custom-root" # specify a non-default root label for the CRUSH map
-    # metadataDevice: "md0" # specify a non-rotational storage so ceph-volume will use it as block db device of bluestore.
-    # databaseSizeMB: "1024" # uncomment if the disks are smaller than 100 GB
-    # osdsPerDevice: "1" # this value can be overridden at the node or device level
-    # encryptedDevice: "true" # the default value for this option is "false"
-    # deviceClass: "myclass" # specify a device class for OSDs in the cluster
+      # crushRoot: "custom-root" # specify a non-default root label for the CRUSH map
+      # metadataDevice: "md0" # specify a non-rotational storage so ceph-volume will use it as block db device of bluestore.
+      # databaseSizeMB: "1024" # uncomment if the disks are smaller than 100 GB
+      # osdsPerDevice: "1" # this value can be overridden at the node or device level
+      # encryptedDevice: "true" # the default value for this option is "false"
+      # deviceClass: "myclass" # specify a device class for OSDs in the cluster
     allowDeviceClassUpdate: false # whether to allow changing the device class of an OSD after it is created
     allowOsdCrushWeightUpdate: false # whether to allow resizing the OSD crush weight after osd pvc is increased
     # Individual nodes and their config can be specified as well, but 'useAllNodes' above must be set to false. Then, only the named
@@ -320,10 +322,10 @@ spec:
 
     # cephfs driver specific settings.
     cephfs:
-    # Set CephFS Kernel mount options to use https://docs.ceph.com/en/latest/man/8/mount.ceph/#options.
-    # kernelMountOptions: ""
-    # Set CephFS Fuse mount options to use https://docs.ceph.com/en/latest/man/8/ceph-fuse/#options.
-    # fuseMountOptions: ""
+      # Set CephFS Kernel mount options to use https://docs.ceph.com/en/latest/man/8/mount.ceph/#options.
+      # kernelMountOptions: ""
+      # Set CephFS Fuse mount options to use https://docs.ceph.com/en/latest/man/8/ceph-fuse/#options.
+      # fuseMountOptions: ""
 
   # healthChecks
   # Valid values for daemons are 'mon', 'osd', 'status'

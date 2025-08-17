@@ -1,3 +1,4 @@
+# FROM: https://github.com/rook/rook/blob/v1.17.7/deploy/examples/crds.yaml
 ##############################################################################
 # Create the CRDs that are necessary before creating your Rook cluster.
 # These resources *must* be created before the cluster.yaml or their variants.
@@ -16,6 +17,9 @@ spec:
     kind: CephBlockPoolRadosNamespace
     listKind: CephBlockPoolRadosNamespaceList
     plural: cephblockpoolradosnamespaces
+    shortNames:
+      - cephbprns
+      - cephrns
     singular: cephblockpoolradosnamespace
   scope: Namespaced
   versions:
@@ -107,6 +111,28 @@ spec:
             status:
               description: Status represents the status of a CephBlockPool Rados Namespace
               properties:
+                conditions:
+                  items:
+                    description: Condition represents a status condition on any Rook-Ceph Custom Resource.
+                    properties:
+                      lastHeartbeatTime:
+                        format: date-time
+                        type: string
+                      lastTransitionTime:
+                        format: date-time
+                        type: string
+                      message:
+                        type: string
+                      reason:
+                        description: ConditionReason is a reason for a condition
+                        type: string
+                      status:
+                        type: string
+                      type:
+                        description: ConditionType represent a resource's status
+                        type: string
+                    type: object
+                  type: array
                 info:
                   additionalProperties:
                     type: string
@@ -168,12 +194,68 @@ spec:
                         daemon_health:
                           description: DaemonHealth is the health of the mirroring daemon
                           type: string
+                        group_health:
+                          description: GroupHealth is the health of the mirrored image group
+                          nullable: true
+                          type: string
+                        group_states:
+                          description: GroupStates is the various state for all mirrored image groups
+                          nullable: true
+                          properties:
+                            error:
+                              description: Error is when the mirroring state is errored
+                              type: integer
+                            replaying:
+                              description: Replaying is when the replay of the mirroring journal is on-going
+                              type: integer
+                            starting_replay:
+                              description: StartingReplay is when the replay of the mirroring journal starts
+                              type: integer
+                            stopped:
+                              description: Stopped is when the mirroring state is stopped
+                              type: integer
+                            stopping_replay:
+                              description: StopReplaying is when the replay of the mirroring journal stops
+                              type: integer
+                            syncing:
+                              description: Syncing is when the image is syncing
+                              type: integer
+                            unknown:
+                              description: Unknown is when the mirroring state is unknown
+                              type: integer
+                          type: object
                         health:
                           description: Health is the mirroring health
                           type: string
                         image_health:
                           description: ImageHealth is the health of the mirrored image
                           type: string
+                        image_states:
+                          description: ImageStates is the various state for all mirrored images
+                          nullable: true
+                          properties:
+                            error:
+                              description: Error is when the mirroring state is errored
+                              type: integer
+                            replaying:
+                              description: Replaying is when the replay of the mirroring journal is on-going
+                              type: integer
+                            starting_replay:
+                              description: StartingReplay is when the replay of the mirroring journal starts
+                              type: integer
+                            stopped:
+                              description: Stopped is when the mirroring state is stopped
+                              type: integer
+                            stopping_replay:
+                              description: StopReplaying is when the replay of the mirroring journal stops
+                              type: integer
+                            syncing:
+                              description: Syncing is when the image is syncing
+                              type: integer
+                            unknown:
+                              description: Unknown is when the mirroring state is unknown
+                              type: integer
+                          type: object
                         states:
                           description: States is the various state for all mirrored images
                           nullable: true
@@ -271,6 +353,8 @@ spec:
     kind: CephBlockPool
     listKind: CephBlockPoolList
     plural: cephblockpools
+    shortNames:
+      - cephbp
     singular: cephblockpool
   scope: Namespaced
   versions:
@@ -491,6 +575,7 @@ spec:
                       type: string
                     targetSizeRatio:
                       description: TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity
+                      minimum: 0
                       type: number
                   required:
                     - size
@@ -599,12 +684,68 @@ spec:
                         daemon_health:
                           description: DaemonHealth is the health of the mirroring daemon
                           type: string
+                        group_health:
+                          description: GroupHealth is the health of the mirrored image group
+                          nullable: true
+                          type: string
+                        group_states:
+                          description: GroupStates is the various state for all mirrored image groups
+                          nullable: true
+                          properties:
+                            error:
+                              description: Error is when the mirroring state is errored
+                              type: integer
+                            replaying:
+                              description: Replaying is when the replay of the mirroring journal is on-going
+                              type: integer
+                            starting_replay:
+                              description: StartingReplay is when the replay of the mirroring journal starts
+                              type: integer
+                            stopped:
+                              description: Stopped is when the mirroring state is stopped
+                              type: integer
+                            stopping_replay:
+                              description: StopReplaying is when the replay of the mirroring journal stops
+                              type: integer
+                            syncing:
+                              description: Syncing is when the image is syncing
+                              type: integer
+                            unknown:
+                              description: Unknown is when the mirroring state is unknown
+                              type: integer
+                          type: object
                         health:
                           description: Health is the mirroring health
                           type: string
                         image_health:
                           description: ImageHealth is the health of the mirrored image
                           type: string
+                        image_states:
+                          description: ImageStates is the various state for all mirrored images
+                          nullable: true
+                          properties:
+                            error:
+                              description: Error is when the mirroring state is errored
+                              type: integer
+                            replaying:
+                              description: Replaying is when the replay of the mirroring journal is on-going
+                              type: integer
+                            starting_replay:
+                              description: StartingReplay is when the replay of the mirroring journal starts
+                              type: integer
+                            stopped:
+                              description: Stopped is when the mirroring state is stopped
+                              type: integer
+                            stopping_replay:
+                              description: StopReplaying is when the replay of the mirroring journal stops
+                              type: integer
+                            syncing:
+                              description: Syncing is when the image is syncing
+                              type: integer
+                            unknown:
+                              description: Unknown is when the mirroring state is unknown
+                              type: integer
+                          type: object
                         states:
                           description: States is the various state for all mirrored images
                           nullable: true
@@ -709,6 +850,8 @@ spec:
     kind: CephBucketNotification
     listKind: CephBucketNotificationList
     plural: cephbucketnotifications
+    shortNames:
+      - cephbn
     singular: cephbucketnotification
   scope: Namespaced
   versions:
@@ -871,6 +1014,8 @@ spec:
     kind: CephBucketTopic
     listKind: CephBucketTopicList
     plural: cephbuckettopics
+    shortNames:
+      - cephbt
     singular: cephbuckettopic
   scope: Namespaced
   versions:
@@ -954,7 +1099,27 @@ spec:
                     kafka:
                       description: Spec of Kafka endpoint
                       properties:
-                        PasswordSecretRef:
+                        ackLevel:
+                          default: broker
+                          description: The ack level required for this topic (none/broker)
+                          enum:
+                            - none
+                            - broker
+                          type: string
+                        disableVerifySSL:
+                          description: Indicate whether the server certificate is validated by the client or not
+                          type: boolean
+                        mechanism:
+                          default: PLAIN
+                          description: The authentication mechanism for this topic (PLAIN/SCRAM-SHA-512/SCRAM-SHA-256/GSSAPI/OAUTHBEARER)
+                          enum:
+                            - PLAIN
+                            - SCRAM-SHA-512
+                            - SCRAM-SHA-256
+                            - GSSAPI
+                            - OAUTHBEARER
+                          type: string
+                        passwordSecretRef:
                           description: The kafka password to use for authentication
                           properties:
                             key:
@@ -976,7 +1141,14 @@ spec:
                             - key
                           type: object
                           x-kubernetes-map-type: atomic
-                        UserSecretRef:
+                        uri:
+                          description: The URI of the Kafka endpoint to push notification to
+                          minLength: 1
+                          type: string
+                        useSSL:
+                          description: Indicate whether to use SSL when communicating with the broker
+                          type: boolean
+                        userSecretRef:
                           description: The kafka user name to use for authentication
                           properties:
                             key:
@@ -998,33 +1170,6 @@ spec:
                             - key
                           type: object
                           x-kubernetes-map-type: atomic
-                        ackLevel:
-                          default: broker
-                          description: The ack level required for this topic (none/broker)
-                          enum:
-                            - none
-                            - broker
-                          type: string
-                        disableVerifySSL:
-                          description: Indicate whether the server certificate is validated by the client or not
-                          type: boolean
-                        mechanism:
-                          default: PLAIN
-                          description: The authentication mechanism for this topic (PLAIN/SCRAM-SHA-512/SCRAM-SHA-256/GSSAPI/OAUTHBEARER)
-                          enum:
-                            - PLAIN
-                            - SCRAM-SHA-512
-                            - SCRAM-SHA-256
-                            - GSSAPI
-                            - OAUTHBEARER
-                          type: string
-                        uri:
-                          description: The URI of the Kafka endpoint to push notification to
-                          minLength: 1
-                          type: string
-                        useSSL:
-                          description: Indicate whether to use SSL when communicating with the broker
-                          type: boolean
                       required:
                         - uri
                       type: object
@@ -1104,6 +1249,8 @@ spec:
     kind: CephClient
     listKind: CephClientList
     plural: cephclients
+    shortNames:
+      - cephcl
     singular: cephclient
   scope: Namespaced
   versions:
@@ -1146,6 +1293,19 @@ spec:
                   x-kubernetes-preserve-unknown-fields: true
                 name:
                   type: string
+                removeSecret:
+                  description: |-
+                    RemoveSecret indicates whether the current secret for this ceph client should be removed or not.
+                    If true, the K8s secret will be deleted, but the cephx keyring will remain until the CR is deleted.
+                  type: boolean
+                secretName:
+                  description: |-
+                    SecretName is the name of the secret created for this ceph client.
+                    If not specified, the default name is "rook-ceph-client-" as a prefix to the CR name.
+                  type: string
+                  x-kubernetes-validations:
+                    - message: SecretName is immutable and cannot be changed
+                      rule: self == oldSelf
               required:
                 - caps
               type: object
@@ -1187,6 +1347,8 @@ spec:
     kind: CephCluster
     listKind: CephClusterList
     plural: cephclusters
+    shortNames:
+      - ceph
     singular: cephcluster
   scope: Namespaced
   versions:
@@ -1349,6 +1511,11 @@ spec:
                             - quick
                           type: string
                       type: object
+                    wipeDevicesFromOtherClusters:
+                      description: |-
+                        WipeDevicesFromOtherClusters wipes the OSD disks belonging to other clusters. This is useful in scenarios where ceph cluster
+                        was reinstalled but OSD disk still contains the metadata from previous ceph cluster.
+                      type: boolean
                   type: object
                 continueUpgradeAfterChecksEvenIfNotHealthy:
                   description: ContinueUpgradeAfterChecksEvenIfNotHealthy defines if an upgrade should continue even if PGs are not clean
@@ -1392,6 +1559,11 @@ spec:
                           description: Enables read affinity for CSI driver.
                           type: boolean
                       type: object
+                    skipUserCreation:
+                      description: |-
+                        SkipUserCreation determines whether CSI users and their associated secrets should be skipped.
+                        If set to true, the user must manually manage these secrets.
+                      type: boolean
                   type: object
                 dashboard:
                   description: Dashboard settings
@@ -2622,6 +2794,10 @@ spec:
                     exporter:
                       description: Ceph exporter configuration
                       properties:
+                        hostNetwork:
+                          description: Whether host networking is enabled for CephExporter. If not set, the network settings from CephCluster.spec.networking will be applied.
+                          nullable: true
+                          type: boolean
                         perfCountersPrioLimit:
                           default: 5
                           description: Only performance counters greater than or equal to this option are fetched
@@ -2832,7 +3008,7 @@ spec:
                       type: string
                       x-kubernetes-validations:
                         - message: network provider must be disabled (reverted to empty string) before a new provider is enabled
-                          rule: self == '' || self == oldSelf
+                          rule: self == '' || oldSelf == '' || self == oldSelf
                     selectors:
                       additionalProperties:
                         type: string
@@ -6333,6 +6509,8 @@ spec:
     kind: CephFilesystemMirror
     listKind: CephFilesystemMirrorList
     plural: cephfilesystemmirrors
+    shortNames:
+      - cephfsm
     singular: cephfilesystemmirror
   scope: Namespaced
   versions:
@@ -7007,6 +7185,8 @@ spec:
     kind: CephFilesystem
     listKind: CephFilesystemList
     plural: cephfilesystems
+    shortNames:
+      - cephfs
     singular: cephfilesystem
   scope: Namespaced
   versions:
@@ -7211,6 +7391,7 @@ spec:
                             type: string
                           targetSizeRatio:
                             description: TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity
+                            minimum: 0
                             type: number
                         required:
                           - size
@@ -7399,6 +7580,7 @@ spec:
                           type: string
                         targetSizeRatio:
                           description: TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity
+                          minimum: 0
                           type: number
                       required:
                         - size
@@ -8594,6 +8776,9 @@ spec:
     kind: CephFilesystemSubVolumeGroup
     listKind: CephFilesystemSubVolumeGroupList
     plural: cephfilesystemsubvolumegroups
+    shortNames:
+      - cephfssvg
+      - cephsvg
     singular: cephfilesystemsubvolumegroup
   scope: Namespaced
   versions:
@@ -10714,6 +10899,8 @@ spec:
     kind: CephObjectRealm
     listKind: CephObjectRealmList
     plural: cephobjectrealms
+    shortNames:
+      - cephor
     singular: cephobjectrealm
   scope: Namespaced
   versions:
@@ -10804,6 +10991,8 @@ spec:
     kind: CephObjectStore
     listKind: CephObjectStoreList
     plural: cephobjectstores
+    shortNames:
+      - cephos
     singular: cephobjectstore
   scope: Namespaced
   versions:
@@ -11052,6 +11241,7 @@ spec:
                           type: string
                         targetSizeRatio:
                           description: TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity
+                          minimum: 0
                           type: number
                       required:
                         - size
@@ -12652,6 +12842,7 @@ spec:
                           type: string
                         targetSizeRatio:
                           description: TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity
+                          minimum: 0
                           type: number
                       required:
                         - size
@@ -12956,6 +13147,7 @@ spec:
     shortNames:
       - rcou
       - objectuser
+      - cephosu
     singular: cephobjectstoreuser
   scope: Namespaced
   versions:
@@ -13271,6 +13463,8 @@ spec:
     kind: CephObjectZoneGroup
     listKind: CephObjectZoneGroupList
     plural: cephobjectzonegroups
+    shortNames:
+      - cephozg
     singular: cephobjectzonegroup
   scope: Namespaced
   versions:
@@ -13366,6 +13560,8 @@ spec:
     kind: CephObjectZone
     listKind: CephObjectZoneList
     plural: cephobjectzones
+    shortNames:
+      - cephoz
     singular: cephobjectzone
   scope: Namespaced
   versions:
@@ -13578,6 +13774,7 @@ spec:
                           type: string
                         targetSizeRatio:
                           description: TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity
+                          minimum: 0
                           type: number
                       required:
                         - size
@@ -13761,6 +13958,7 @@ spec:
                           type: string
                         targetSizeRatio:
                           description: TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity
+                          minimum: 0
                           type: number
                       required:
                         - size
@@ -13935,6 +14133,8 @@ spec:
     kind: CephRBDMirror
     listKind: CephRBDMirrorList
     plural: cephrbdmirrors
+    shortNames:
+      - cephrbdm
     singular: cephrbdmirror
   scope: Namespaced
   versions:

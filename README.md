@@ -24,3 +24,17 @@ $ cilium install
 $ cilium status --wait
 $ systemctl restart kubelet
 ```
+
+### Install Ceph
+
+```sh
+$ cd manifests
+# create ceph operator
+$ kubectl create -f ceph-crds.yaml -f ceph-common.yaml -f ceph-operator.yaml
+# verify the rook-ceph-operator is in the `Running` state before proceeding
+$ kubectl -n rook-ceph get pod
+# create ceph cluster
+$ kubectl create -f ceph-cluster.yaml
+# create ceph storage pool and storage class
+$ kubectl create -f ceph-storage-class.yaml
+```
