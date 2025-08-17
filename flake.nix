@@ -1,7 +1,8 @@
 {
   description = "Kubernetes hosts configuration";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+  #inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+  inputs.nixpkgs.url = "github:wiwiwa/nixpkgs/nixos-25.05";
 
   outputs = { self, nixpkgs, ... }@inputs:
   let
