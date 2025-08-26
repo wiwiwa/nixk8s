@@ -1,0 +1,42 @@
+{{- range $name,$config:=.Values.users}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workspace-{{$name}}
+  namespace: user-workspace
+spec:
+  selector:
+    app: workspace
+  ports:
+    - protocol: TCP
+      port: 22
+      targetPort: 22
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workspace-{{$name}}
+  namespace: user-workspace
+  labels:
+    app: workspace-{{$name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workspace-{{$name}}
+  template:
+    metadata:
+      labels:
+        app: workspace-{{$name}}
+    spec:
+      containers:
+      - name: workspace-{{$name}}
+        image: alpine
+        command: ["/bin/sh", "-c"]
+        args:
+        - while true; do sleep 1000; done
+        ports:
+        - containerPort: 22
+{{- end}}
