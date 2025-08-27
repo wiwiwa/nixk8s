@@ -38,3 +38,16 @@ $ kubectl create -f ceph-cluster.yaml
 # create ceph storage pool and storage class
 $ kubectl create -f ceph-storage-class.yaml
 ```
+
+### Workspace
+
+Manage workspaces for users by YAML.
+* User configurations are defined in value `users`.
+* Each workspace can be connected by VNC over SSH
+
+```bash
+# create workspaces
+$ helm install user-workspace ./user-workspace
+# add/remove/update workspaces
+$ helm upgrade user-workspace ./user-workspace
+```

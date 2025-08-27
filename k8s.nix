@@ -22,7 +22,7 @@ in {
       ${crictl} stopp $id
       ${crictl} rmp $id
     '';
-    environment.systemPackages = [ pkgs.kubectl pkgs.cilium-cli ];
+    environment.systemPackages = [ pkgs.kubectl pkgs.cilium-cli pkgs.kubernetes-helm ];
     # make /etc/cni/net.d writtable
     fileSystems."/etc/cni/net.d" = {
       device = "/var/lib/kubelet";
