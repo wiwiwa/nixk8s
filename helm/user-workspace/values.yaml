@@ -1,5 +1,9 @@
 users:
   samuel:
-    ssh-key: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBroYELcc29VCobSL62jSZnNZIQq/UF8lFNYc1DktQk1OQnhb8H+2GQQmHhbUQjPkGiAhsWjHG9g4iM57qBCiYM= samuel@MBA-M2"
+    ssh:
+      port: 30122
+      key: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBroYELcc29VCobSL62jSZnNZIQq/UF8lFNYc1DktQk1OQnhb8H+2GQQmHhbUQjPkGiAhsWjHG9g4iM57qBCiYM= samuel@MBA-M2"
   tom:
-    ssh-key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdDcq/wPcfPkESz8faqJ6/q+MrLkobZ7/ouCDqAsnSb azuread_omyang@HP-TY"
+    ssh:
+      port: 30222
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPdDcq/wPcfPkESz8faqJ6/q+MrLkobZ7/ouCDqAsnSb azuread_omyang@HP-TY"

@@ -7,12 +7,13 @@ metadata:
   namespace: user-workspace
 spec:
   selector:
-    app: workspace
+    app: workspace-{{$name}}
   ports:
     - protocol: TCP
       port: 22
       targetPort: 22
-  type: ClusterIP
+      nodePort: {{$config.ssh.port}}
+  type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,9 +35,60 @@ spec:
       containers:
       - name: workspace-{{$name}}
         image: alpine
-        command: ["/bin/sh", "-c"]
-        args:
-        - while true; do sleep 1000; done
+        command:
+        - /bin/sh
+        - -c
+        - |
+          apk add openssh-server
+          test ! -e ~/.ssh/server-ecdsa.key &&
+            ssh-keygen -t ecdsa -f  ~/.ssh/server-ecdsa.key -N ''
+          test ! -e  ~/.ssh/authorized_keys &&
+            mkdir -p  ~/.ssh &&
+            echo "{{$config.ssh.key}}" >  ~/.ssh/authorized_keys
+          /usr/sbin/sshd -h  ~/.ssh/server-ecdsa.key -o AllowTcpForwarding=yes
+          test -e /usr/local/idea &&
+            apk add git openjdk21-jre-headless jq &&
+            uname -a | grep -q aarch && arch=ARM64 || arch='' &&
+            wget -O - 'https://data.services.jetbrains.com/products/releases?code=IIC&latest=true&type=release' |
+              jq ".IIC[0].downloads.linux$arch.link" |
+              xargs wget -O - |
+              tar xzf - -C /usr/local &&
+            ln -s /usr/local/idea-IC-*/bin/ /usr/local/bin
+          apk add tigervnc openbox font-dejavu xterm
+          test ! -e ~/.config/tigervnc/config &&
+            mkdir -p ~/.config/tigervnc &&
+            echo "SecurityTypes=None" > ~/.config/tigervnc/config
+          export DISPLAY=:0.0
+          exec vncserver :1
         ports:
         - containerPort: 22
+        volumeDevices:
+        - name: workspace-{{$name}}-pvc
+          devicePath: /dev/ceph-rbd
+        volumeMounts:
+        - name: dev-kvm
+          mountPath: /dev/kvm
+        securityContext:
+          privileged: true
+      volumes:
+      - name: workspace-{{$name}}-pvc
+        persistentVolumeClaim:
+          claimName: workspace-{{$name}}-pvc
+      - name: dev-kvm
+        hostPath:
+          path: /dev/kvm
+          type: CharDevice
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: workspace-{{$name}}-pvc
+  namespace: user-workspace
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Block
+  resources:
+    requests:
+      storage: 20Gi
 {{- end}}
